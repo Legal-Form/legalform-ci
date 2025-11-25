@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Building2, FileText, Users, Shield, CheckCircle2, Star } from "lucide-react";
+import { ArrowRight, Building2, FileText, Users, Shield, CheckCircle2, Star, Lightbulb, DollarSign, Palette, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
@@ -10,35 +10,41 @@ const Index = () => {
   const services = [
     {
       icon: Building2,
-      title: "Création d'entreprise",
-      description: "SARL, SA, SAS, SUARL, SNC, SCS, Entreprise Individuelle",
-      items: ["RCCM", "DFE", "NCC", "Immatriculation CNPS"],
-    },
-    {
-      icon: Users,
-      title: "Associations & ONG",
-      description: "Création d'associations et d'organisations non gouvernementales",
-      items: ["Statuts", "Enregistrement", "Documents légaux"],
+      title: "Création & Structuration",
+      description: "De l'idée au lancement opérationnel",
+      items: ["SARL, SA, SAS, SUARL, Entreprise Individuelle", "Association, ONG, Coopérative", "Structuration et formalisation de projet", "Publication au journal officiel incluse"],
     },
     {
       icon: FileText,
-      title: "Documents juridiques",
-      description: "Rédaction et modification de documents légaux",
-      items: ["Contrats", "Statuts", "Procurations", "Baux"],
+      title: "Accompagnement juridique",
+      description: "Documents et immatriculations complètes",
+      items: ["RCCM, DFE, NCC, CNPS", "IDU, NTD, Domiciliation", "Contrats, Statuts, Procurations", "Modification de statuts"],
     },
     {
-      icon: Shield,
-      title: "Services complémentaires",
-      description: "Tous vos besoins administratifs en un seul endroit",
-      items: ["IDU", "NTD", "Domiciliation", "Avis de constitution"],
+      icon: GraduationCap,
+      title: "Formation & Conseil",
+      description: "Accompagnement stratégique personnalisé",
+      items: ["Formation entrepreneuriale", "Conseil en stratégie d'entreprise", "Structuration de business model", "Accompagnement opérationnel"],
+    },
+    {
+      icon: DollarSign,
+      title: "Financement",
+      description: "Mobilisation et recherche de fonds",
+      items: ["Recherche de financement", "Mobilisation de fonds", "Montage de dossiers", "Mise en relation avec partenaires"],
+    },
+    {
+      icon: Palette,
+      title: "Solutions digitales",
+      description: "Identité visuelle et présence en ligne",
+      items: ["Conception de sites web", "Développement d'applications", "Création de logo et identité", "Branding complet"],
     },
   ];
 
   const steps = [
-    { number: "01", title: "Choisissez votre type d'entreprise", description: "SARL, SA, SAS ou autre structure" },
+    { number: "01", title: "Choisissez votre service", description: "Création, Formation, Financement, Digital..." },
     { number: "02", title: "Remplissez le formulaire", description: "Informations simples et rapides" },
-    { number: "03", title: "Validation & paiement", description: "150 000 FCFA tout compris" },
-    { number: "04", title: "Récupérez vos documents", description: "Sous 72h à 7 jours ouvrés" },
+    { number: "03", title: "Validation & paiement", description: "Tarifs adaptés selon votre région" },
+    { number: "04", title: "Accompagnement complet", description: "Suivi personnalisé jusqu'au succès" },
   ];
 
   const testimonials = [
@@ -90,11 +96,11 @@ const Index = () => {
         <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <h1 className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-white mb-6 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              Je crée facilement mon entreprise avec{" "}
-              <span className="text-accent">Legal Form</span>
+              Transformez votre idée en{" "}
+              <span className="text-accent">entreprise solide</span>
             </h1>
             <p className="text-lg sm:text-xl lg:text-2xl text-white/90 mb-8 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-150">
-              et j'obtiens tous mes documents officiels
+              Accompagnement complet de la structuration au financement, en passant par la création juridique et l'identité digitale
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
@@ -112,8 +118,8 @@ const Index = () => {
             </div>
 
             <div className="inline-flex items-center justify-center bg-accent text-white rounded-full px-8 py-4 shadow-strong animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
-              <span className="text-3xl font-bold">150 000 FCFA</span>
-              <span className="ml-3 text-lg opacity-90">tout compris</span>
+              <span className="text-3xl font-bold">À partir de 150 000 FCFA</span>
+              <span className="ml-3 text-lg opacity-90">selon la région</span>
             </div>
           </div>
         </div>
@@ -127,30 +133,30 @@ const Index = () => {
               Nos Services
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Une gamme complète de services pour accompagner la création et le développement de votre entreprise
+              Votre partenaire stratégique pour entreprendre en toute sécurité avec une équipe d'experts
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {services.map((service, index) => {
               const Icon = service.icon;
               return (
                 <Card key={index} className="border-2 hover:border-primary hover:shadow-strong transition-all duration-300 group">
-                  <CardContent className="p-8">
-                    <div className="flex items-start space-x-4">
-                      <div className="p-3 rounded-xl bg-primary/10 group-hover:bg-primary group-hover:text-white transition-colors">
+                  <CardContent className="p-6">
+                    <div className="space-y-4">
+                      <div className="p-3 rounded-xl bg-primary/10 group-hover:bg-primary group-hover:text-white transition-colors w-fit">
                         <Icon className="h-8 w-8 text-primary group-hover:text-white" />
                       </div>
-                      <div className="flex-1">
+                      <div>
                         <h3 className="font-heading font-semibold text-xl text-foreground mb-2">
                           {service.title}
                         </h3>
                         <p className="text-muted-foreground mb-4">{service.description}</p>
                         <ul className="space-y-2">
                           {service.items.map((item, i) => (
-                            <li key={i} className="flex items-center text-sm text-muted-foreground">
-                              <CheckCircle2 className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                              {item}
+                            <li key={i} className="flex items-start text-sm text-muted-foreground">
+                              <CheckCircle2 className="h-4 w-4 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                              <span>{item}</span>
                             </li>
                           ))}
                         </ul>

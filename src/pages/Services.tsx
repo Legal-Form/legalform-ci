@@ -1,4 +1,4 @@
-import { Building2, Users, FileText, Briefcase, ShieldCheck, Landmark } from "lucide-react";
+import { Building2, Users, FileText, Briefcase, ShieldCheck, Landmark, GraduationCap } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -125,7 +125,7 @@ const Services = () => {
               Nos Services
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Une gamme complète de services juridiques et administratifs pour accompagner votre projet
+              Accompagnement complet de la structuration à la croissance : juridique, formation, financement et solutions digitales
             </p>
           </div>
 
@@ -227,20 +227,80 @@ const Services = () => {
             </div>
           </section>
 
-          {/* CTA */}
-          <div className="text-center bg-gradient-hero rounded-2xl p-12">
-            <h2 className="font-heading font-bold text-3xl sm:text-4xl text-white mb-4">
-              Prêt à créer votre entreprise ?
+          {/* Pricing Info */}
+          <section className="mb-20">
+            <div className="bg-gradient-hero rounded-2xl p-12 text-center text-white">
+              <h2 className="font-heading font-bold text-3xl sm:text-4xl mb-6">
+                Tarifs de Création d'Entreprise
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-8">
+                <Card className="bg-white/10 backdrop-blur border-white/20">
+                  <CardContent className="p-8">
+                    <h3 className="font-heading font-bold text-2xl mb-2">Abidjan</h3>
+                    <div className="text-4xl font-bold text-accent mb-2">150 000 FCFA</div>
+                    <p className="text-white/80">Publication au journal officiel incluse</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/10 backdrop-blur border-white/20">
+                  <CardContent className="p-8">
+                    <h3 className="font-heading font-bold text-2xl mb-2">Régions de l'intérieur</h3>
+                    <div className="text-4xl font-bold text-accent mb-2">Jusqu'à 200 000 FCFA</div>
+                    <p className="text-white/80">Tarifs variables selon la localisation</p>
+                  </CardContent>
+                </Card>
+              </div>
+              <p className="text-lg text-white/90 mb-8">
+                Tous nos tarifs incluent la publication au journal officiel
+              </p>
+              <Link to="/create">
+                <Button size="lg" className="bg-accent hover:bg-accent/90 text-white shadow-strong text-lg px-8 py-6 h-auto font-semibold">
+                  Démarrer mon projet
+                </Button>
+              </Link>
+            </div>
+          </section>
+          
+          {/* Additional Services Section */}
+          <section className="mb-20">
+            <h2 className="font-heading font-bold text-3xl text-foreground mb-8 text-center">
+              Services Additionnels
             </h2>
-            <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-              Commencez dès maintenant et obtenez tous vos documents en quelques jours
-            </p>
-            <Link to="/create">
-              <Button size="lg" className="bg-accent hover:bg-accent/90 text-white shadow-strong text-lg px-8 py-6 h-auto font-semibold">
-                Créer mon entreprise
-              </Button>
-            </Link>
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Card className="border-2 hover:shadow-strong transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-primary">
+                    <GraduationCap className="h-6 w-6 mr-2" />
+                    Formation
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Formation entrepreneuriale et accompagnement stratégique personnalisé</p>
+                </CardContent>
+              </Card>
+              <Card className="border-2 hover:shadow-strong transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-primary">
+                    <Briefcase className="h-6 w-6 mr-2" />
+                    Financement
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Recherche et mobilisation de financement pour votre projet</p>
+                </CardContent>
+              </Card>
+              <Card className="border-2 hover:shadow-strong transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-primary">
+                    <Building2 className="h-6 w-6 mr-2" />
+                    Solutions Digitales
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Conception de sites web, applications et identité visuelle complète</p>
+                </CardContent>
+              </Card>
+            </div>
+          </section>
         </div>
       </main>
 
