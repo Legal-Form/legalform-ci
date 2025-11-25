@@ -68,14 +68,15 @@ const Services = () => {
   ];
 
   const legalDocuments = [
-    "Contrat de bail commercial",
+    "Rédaction de statuts",
+    "Modification de statuts",
+    "Contrat de bail commercial enregistré",
     "Contrat de travail (CDI, CDD)",
     "Convention de partenariat",
     "Procurations et mandats",
     "Actes de cession de parts",
     "Protocoles d'accord",
-    "Statuts personnalisés",
-    "Modification de statuts",
+    "Déclaration de Souscription et de Versement (DSV)",
   ];
 
   const complementaryServices = [
@@ -104,12 +105,16 @@ const Services = () => {
       description: "Numéro de Télédéclarant fiscal",
     },
     {
-      title: "Domiciliation",
-      description: "Adresse commerciale et siège social",
+      title: "Avis de constitution",
+      description: "Publication officielle au journal",
     },
     {
-      title: "Avis de constitution",
-      description: "Publication officielle de création",
+      title: "Publication JO",
+      description: "Publication au Journal Officiel",
+    },
+    {
+      title: "Domiciliation",
+      description: "Adresse commerciale et siège social",
     },
   ];
 
@@ -231,26 +236,34 @@ const Services = () => {
           <section className="mb-20">
             <div className="bg-gradient-hero rounded-2xl p-12 text-center text-white">
               <h2 className="font-heading font-bold text-3xl sm:text-4xl mb-6">
-                Tarifs de Création d'Entreprise
+                Tarifs de Création et Légalisation d'Entreprise
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-8">
                 <Card className="bg-white/10 backdrop-blur border-white/20">
                   <CardContent className="p-8">
                     <h3 className="font-heading font-bold text-2xl mb-2">Abidjan</h3>
                     <div className="text-4xl font-bold text-accent mb-2">150 000 FCFA</div>
-                    <p className="text-white/80">Publication au journal officiel incluse</p>
+                    <p className="text-white/80">Légalisation complète jusqu'à la publication au journal officiel</p>
                   </CardContent>
                 </Card>
                 <Card className="bg-white/10 backdrop-blur border-white/20">
                   <CardContent className="p-8">
                     <h3 className="font-heading font-bold text-2xl mb-2">Régions de l'intérieur</h3>
                     <div className="text-4xl font-bold text-accent mb-2">Jusqu'à 200 000 FCFA</div>
-                    <p className="text-white/80">Tarifs variables selon la localisation</p>
+                    <p className="text-white/80">Selon la région, publication au journal officiel incluse</p>
                   </CardContent>
                 </Card>
               </div>
-              <p className="text-lg text-white/90 mb-8">
-                Tous nos tarifs incluent la publication au journal officiel
+              <div className="max-w-3xl mx-auto mb-6 bg-white/5 backdrop-blur rounded-xl p-6">
+                <p className="text-lg text-white/90 mb-3">
+                  <strong>Ce tarif inclut :</strong> Rédaction de statuts, immatriculation RCCM, DFE, NCC, CNPS, IDU, NTD, Avis de constitution et publication au journal officiel
+                </p>
+                <p className="text-base text-white/80">
+                  <strong>Modalités de paiement :</strong> 50% d'acompte à la commande, puis paiement progressif du solde durant la procédure
+                </p>
+              </div>
+              <p className="text-sm text-white/70 mb-8">
+                💳 Paiement en ligne accepté : Mobile Money, carte bancaire et virement électronique
               </p>
               <Link to="/create">
                 <Button size="lg" className="bg-accent hover:bg-accent/90 text-white shadow-strong text-lg px-8 py-6 h-auto font-semibold">
@@ -262,10 +275,25 @@ const Services = () => {
           
           {/* Additional Services Section */}
           <section className="mb-20">
-            <h2 className="font-heading font-bold text-3xl text-foreground mb-8 text-center">
+            <h2 className="font-heading font-bold text-3xl text-foreground mb-4 text-center">
               Services Additionnels
             </h2>
+            <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Services complémentaires facturés séparément sur devis personnalisé
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Card className="border-2 hover:shadow-strong transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-primary">
+                    <FileText className="h-6 w-6 mr-2" />
+                    Structuration de Projet
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Montage de business plan, études de faisabilité et conseil stratégique</p>
+                  <p className="text-sm text-primary font-semibold mt-2">Sur devis</p>
+                </CardContent>
+              </Card>
               <Card className="border-2 hover:shadow-strong transition-all">
                 <CardHeader>
                   <CardTitle className="flex items-center text-primary">
@@ -274,18 +302,20 @@ const Services = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">Formation entrepreneuriale et accompagnement stratégique personnalisé</p>
+                  <p className="text-muted-foreground">Formation entrepreneuriale, gestion d'entreprise et accompagnement personnalisé</p>
+                  <p className="text-sm text-primary font-semibold mt-2">Sur devis</p>
                 </CardContent>
               </Card>
               <Card className="border-2 hover:shadow-strong transition-all">
                 <CardHeader>
                   <CardTitle className="flex items-center text-primary">
                     <Briefcase className="h-6 w-6 mr-2" />
-                    Financement
+                    Mobilisation de Financement
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">Recherche et mobilisation de financement pour votre projet</p>
+                  <p className="text-muted-foreground">Recherche, montage de dossiers et mobilisation de financements</p>
+                  <p className="text-sm text-primary font-semibold mt-2">Sur devis</p>
                 </CardContent>
               </Card>
               <Card className="border-2 hover:shadow-strong transition-all">
@@ -296,7 +326,32 @@ const Services = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">Conception de sites web, applications et identité visuelle complète</p>
+                  <p className="text-muted-foreground">Conception de sites web, applications mobiles et solutions digitales sur mesure</p>
+                  <p className="text-sm text-primary font-semibold mt-2">Sur devis</p>
+                </CardContent>
+              </Card>
+              <Card className="border-2 hover:shadow-strong transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-primary">
+                    <Building2 className="h-6 w-6 mr-2" />
+                    Identité Visuelle
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Conception de logos, chartes graphiques et supports de communication</p>
+                  <p className="text-sm text-primary font-semibold mt-2">Sur devis</p>
+                </CardContent>
+              </Card>
+              <Card className="border-2 hover:shadow-strong transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-primary">
+                    <FileText className="h-6 w-6 mr-2" />
+                    Comptabilité & Fiscalité
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Suivi comptable, déclarations fiscales et conseil en gestion financière</p>
+                  <p className="text-sm text-primary font-semibold mt-2">Sur devis</p>
                 </CardContent>
               </Card>
             </div>
