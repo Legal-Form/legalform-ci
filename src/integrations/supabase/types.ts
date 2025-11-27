@@ -14,6 +14,157 @@ export type Database = {
   }
   public: {
     Tables: {
+      company_associates: {
+        Row: {
+          cash_contribution: number | null
+          company_request_id: string
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          id_number: string | null
+          nature_contribution_description: string | null
+          nature_contribution_value: number | null
+          number_of_shares: number | null
+          percentage: number | null
+          phone: string | null
+          share_end: number | null
+          share_start: number | null
+          total_contribution: number | null
+        }
+        Insert: {
+          cash_contribution?: number | null
+          company_request_id: string
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          id_number?: string | null
+          nature_contribution_description?: string | null
+          nature_contribution_value?: number | null
+          number_of_shares?: number | null
+          percentage?: number | null
+          phone?: string | null
+          share_end?: number | null
+          share_start?: number | null
+          total_contribution?: number | null
+        }
+        Update: {
+          cash_contribution?: number | null
+          company_request_id?: string
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          id_number?: string | null
+          nature_contribution_description?: string | null
+          nature_contribution_value?: number | null
+          number_of_shares?: number | null
+          percentage?: number | null
+          phone?: string | null
+          share_end?: number | null
+          share_start?: number | null
+          total_contribution?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_associates_company_request_id_fkey"
+            columns: ["company_request_id"]
+            isOneToOne: false
+            referencedRelation: "company_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_documents: {
+        Row: {
+          associate_id: string | null
+          company_request_id: string
+          document_type: string
+          file_name: string
+          file_path: string
+          id: string
+          uploaded_at: string
+        }
+        Insert: {
+          associate_id?: string | null
+          company_request_id: string
+          document_type: string
+          file_name: string
+          file_path: string
+          id?: string
+          uploaded_at?: string
+        }
+        Update: {
+          associate_id?: string | null
+          company_request_id?: string
+          document_type?: string
+          file_name?: string
+          file_path?: string
+          id?: string
+          uploaded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_documents_associate_id_fkey"
+            columns: ["associate_id"]
+            isOneToOne: false
+            referencedRelation: "company_associates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_documents_company_request_id_fkey"
+            columns: ["company_request_id"]
+            isOneToOne: false
+            referencedRelation: "company_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_manager: {
+        Row: {
+          birth_certificate: string | null
+          company_request_id: string
+          created_at: string
+          criminal_record: string | null
+          email: string
+          full_name: string
+          id: string
+          id_number: string | null
+          phone: string
+        }
+        Insert: {
+          birth_certificate?: string | null
+          company_request_id: string
+          created_at?: string
+          criminal_record?: string | null
+          email: string
+          full_name: string
+          id?: string
+          id_number?: string | null
+          phone: string
+        }
+        Update: {
+          birth_certificate?: string | null
+          company_request_id?: string
+          created_at?: string
+          criminal_record?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          id_number?: string | null
+          phone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_manager_company_request_id_fkey"
+            columns: ["company_request_id"]
+            isOneToOne: true
+            referencedRelation: "company_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_requests: {
         Row: {
           activity: string | null
@@ -34,6 +185,7 @@ export type Database = {
           structure_type: string
           tracking_number: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           activity?: string | null
@@ -54,6 +206,7 @@ export type Database = {
           structure_type: string
           tracking_number?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           activity?: string | null
@@ -74,6 +227,7 @@ export type Database = {
           structure_type?: string
           tracking_number?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -149,15 +303,63 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name: string
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "client"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -284,6 +486,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "client"],
+    },
   },
 } as const

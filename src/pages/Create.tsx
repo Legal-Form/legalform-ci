@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Building2, MapPin, FileText, CheckCircle2 } from "lucide-react";
+import { Building2, MapPin, FileText, CheckCircle2, Users, UserCircle, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,17 @@ import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+interface Associate {
+  id: string;
+  fullName: string;
+  phone: string;
+  email: string;
+  idNumber: string;
+  cashContribution: number;
+  natureContributionDescription: string;
+  natureContributionValue: number;
+}
+
 const Create = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -23,15 +35,49 @@ const Create = () => {
     companyName: "",
     activity: "",
     capital: "",
-    associatesCount: "",
+    associatesCount: "1",
     contactName: "",
     phone: "",
     email: "",
     additionalServices: [] as string[],
   });
   
+  const [managerInfo, setManagerInfo] = useState({
+    fullName: "",
+    phone: "",
+    email: "",
+    idNumber: "",
+    birthCertificate: "",
+    criminalRecord: "",
+  });
+  
+  const [associates, setAssociates] = useState<Associate[]>([
+    {
+      id: "1",
+      fullName: "",
+      phone: "",
+      email: "",
+      idNumber: "",
+      cashContribution: 0,
+      natureContributionDescription: "",
+      natureContributionValue: 0,
+    }
+  ]);
+  
+  const { user, loading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      toast({
+        title: "Authentification requise",
+        description: "Vous devez être connecté pour créer une entreprise",
+        variant: "destructive",
+      });
+      navigate("/auth");
+    }
+  }, [user, loading, navigate, toast]);
 
   const structureTypes = [
     { value: "sarl", label: "SARL - Société à Responsabilité Limitée" },
@@ -62,7 +108,73 @@ const Create = () => {
     { id: "domiciliation", label: "Domiciliation commerciale" },
   ];
 
+  const calculateShareDistribution = () => {
+    const totalCapital = associates.reduce((sum, a) => 
+      sum + a.cashContribution + a.natureContributionValue, 0
+    );
+    
+    if (totalCapital === 0) return associates;
+    
+    const shareValue = 5000; // FCFA par part selon OHADA
+    let currentShareNumber = 1;
+    
+    return associates.map(associate => {
+      const totalContribution = associate.cashContribution + associate.natureContributionValue;
+      const percentage = (totalContribution / totalCapital) * 100;
+      const numberOfShares = Math.floor(totalContribution / shareValue);
+      const shareStart = currentShareNumber;
+      const shareEnd = currentShareNumber + numberOfShares - 1;
+      
+      currentShareNumber = shareEnd + 1;
+      
+      return {
+        ...associate,
+        percentage: parseFloat(percentage.toFixed(2)),
+        numberOfShares,
+        shareStart,
+        shareEnd,
+      };
+    });
+  };
+
+  const addAssociate = () => {
+    const newId = (associates.length + 1).toString();
+    setAssociates([...associates, {
+      id: newId,
+      fullName: "",
+      phone: "",
+      email: "",
+      idNumber: "",
+      cashContribution: 0,
+      natureContributionDescription: "",
+      natureContributionValue: 0,
+    }]);
+    setFormData({ ...formData, associatesCount: (associates.length + 1).toString() });
+  };
+
+  const removeAssociate = (id: string) => {
+    if (associates.length > 1) {
+      setAssociates(associates.filter(a => a.id !== id));
+      setFormData({ ...formData, associatesCount: (associates.length - 1).toString() });
+    }
+  };
+
+  const updateAssociate = (id: string, field: keyof Associate, value: any) => {
+    setAssociates(associates.map(a => 
+      a.id === id ? { ...a, [field]: value } : a
+    ));
+  };
+
   const handleSubmit = async () => {
+    if (!user) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Validation basique
     if (!formData.contactName || !formData.phone || !formData.email) {
       toast({
@@ -76,9 +188,10 @@ const Create = () => {
     try {
       const estimatedPrice = formData.region === "Abidjan" ? 150000 : 200000;
       
-      const { data, error } = await supabase
+      const { data: requestData, error: requestError } = await supabase
         .from('company_requests')
         .insert({
+          user_id: user.id,
           structure_type: formData.structureType,
           company_name: formData.companyName,
           region: formData.region,
@@ -96,15 +209,55 @@ const Create = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (requestError) throw requestError;
+
+      // Insert manager info
+      if (managerInfo.fullName) {
+        const { error: managerError } = await supabase
+          .from('company_manager')
+          .insert({
+            company_request_id: requestData.id,
+            full_name: managerInfo.fullName,
+            phone: managerInfo.phone,
+            email: managerInfo.email,
+            id_number: managerInfo.idNumber,
+            birth_certificate: managerInfo.birthCertificate,
+            criminal_record: managerInfo.criminalRecord,
+          });
+        
+        if (managerError) console.error("Manager insert error:", managerError);
+      }
+
+      // Insert associates with calculated shares
+      const calculatedAssociates = calculateShareDistribution();
+      const associatesData = calculatedAssociates.map(a => ({
+        company_request_id: requestData.id,
+        full_name: a.fullName,
+        phone: a.phone,
+        email: a.email,
+        id_number: a.idNumber,
+        cash_contribution: a.cashContribution,
+        nature_contribution_description: a.natureContributionDescription,
+        nature_contribution_value: a.natureContributionValue,
+        percentage: (a as any).percentage,
+        share_start: (a as any).shareStart,
+        share_end: (a as any).shareEnd,
+        number_of_shares: (a as any).numberOfShares,
+      }));
+
+      const { error: associatesError } = await supabase
+        .from('company_associates')
+        .insert(associatesData);
+
+      if (associatesError) console.error("Associates insert error:", associatesError);
 
       toast({
         title: "Demande envoyée avec succès !",
-        description: `Numéro de suivi: ${data.tracking_number}. Un conseiller vous contactera sous 24h`,
+        description: `Numéro de suivi: ${requestData.tracking_number}. Un conseiller vous contactera sous 24h`,
       });
       
       setTimeout(() => {
-        navigate("/");
+        navigate("/client/dashboard");
       }, 2000);
     } catch (error) {
       console.error("Error submitting request:", error);
@@ -155,9 +308,9 @@ const Create = () => {
 
           {/* Progress Steps */}
           <div className="flex justify-between mb-12">
-            {[1, 2, 3, 4, 5].map((num) => (
+            {[1, 2, 3, 4, 5, 6, 7].map((num) => (
               <div key={num} className="flex flex-col items-center flex-1">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
                   step >= num ? "bg-primary text-white" : "bg-muted text-muted-foreground"
                 }`}>
                   {num}
@@ -165,9 +318,11 @@ const Create = () => {
                 <div className="text-xs mt-2 text-center">
                   {num === 1 && "Type"}
                   {num === 2 && "Localisation"}
-                  {num === 3 && "Informations"}
-                  {num === 4 && "Services"}
-                  {num === 5 && "Validation"}
+                  {num === 3 && "Infos"}
+                  {num === 4 && "Gérant"}
+                  {num === 5 && "Associés"}
+                  {num === 6 && "Services"}
+                  {num === 7 && "Récap"}
                 </div>
               </div>
             ))}
@@ -179,10 +334,12 @@ const Create = () => {
                 {step === 1 && <><Building2 className="mr-2" /> Type de structure</>}
                 {step === 2 && <><MapPin className="mr-2" /> Localisation</>}
                 {step === 3 && <><FileText className="mr-2" /> Informations de la structure</>}
-                {step === 4 && <><CheckCircle2 className="mr-2" /> Services complémentaires</>}
-                {step === 5 && <><CheckCircle2 className="mr-2" /> Récapitulatif</>}
+                {step === 4 && <><UserCircle className="mr-2" /> Informations du gérant</>}
+                {step === 5 && <><Users className="mr-2" /> Associés et apports</>}
+                {step === 6 && <><CheckCircle2 className="mr-2" /> Services complémentaires</>}
+                {step === 7 && <><CheckCircle2 className="mr-2" /> Récapitulatif</>}
               </CardTitle>
-              <CardDescription>Étape {step} sur 5</CardDescription>
+              <CardDescription>Étape {step} sur 7</CardDescription>
             </CardHeader>
             
             <CardContent className="space-y-6">
@@ -332,8 +489,223 @@ const Create = () => {
                 </div>
               )}
 
-              {/* Step 4: Additional Services */}
+              {/* Step 4: Manager Info */}
               {step === 4 && (
+                <div className="space-y-4">
+                  <p className="text-muted-foreground mb-4">
+                    Informations sur le gérant de l'entreprise
+                  </p>
+                  
+                  <div>
+                    <Label htmlFor="managerName">Nom complet du gérant *</Label>
+                    <Input
+                      id="managerName"
+                      value={managerInfo.fullName}
+                      onChange={(e) => setManagerInfo({...managerInfo, fullName: e.target.value})}
+                      placeholder="Nom et prénoms"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="managerPhone">Téléphone *</Label>
+                    <Input
+                      id="managerPhone"
+                      type="tel"
+                      value={managerInfo.phone}
+                      onChange={(e) => setManagerInfo({...managerInfo, phone: e.target.value})}
+                      placeholder="+225 0101010101"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="managerEmail">Email *</Label>
+                    <Input
+                      id="managerEmail"
+                      type="email"
+                      value={managerInfo.email}
+                      onChange={(e) => setManagerInfo({...managerInfo, email: e.target.value})}
+                      placeholder="email@exemple.com"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="managerIdNumber">Numéro de pièce d'identité</Label>
+                    <Input
+                      id="managerIdNumber"
+                      value={managerInfo.idNumber}
+                      onChange={(e) => setManagerInfo({...managerInfo, idNumber: e.target.value})}
+                      placeholder="Ex: CNI, Passeport"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="birthCertificate">Extrait de naissance</Label>
+                    <Input
+                      id="birthCertificate"
+                      value={managerInfo.birthCertificate}
+                      onChange={(e) => setManagerInfo({...managerInfo, birthCertificate: e.target.value})}
+                      placeholder="Référence du document"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="criminalRecord">Casier judiciaire (optionnel)</Label>
+                    <Input
+                      id="criminalRecord"
+                      value={managerInfo.criminalRecord}
+                      onChange={(e) => setManagerInfo({...managerInfo, criminalRecord: e.target.value})}
+                      placeholder="Référence du document"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Step 5: Associates */}
+              {step === 5 && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <p className="text-muted-foreground">
+                      Ajoutez les associés et leurs apports (minimum 1)
+                    </p>
+                    <Button type="button" onClick={addAssociate} size="sm">
+                      <Plus className="mr-2 h-4 w-4" />
+                      Ajouter un associé
+                    </Button>
+                  </div>
+                  
+                  {associates.map((associate, index) => {
+                    const calculated = calculateShareDistribution()[index];
+                    const totalContribution = associate.cashContribution + associate.natureContributionValue;
+                    
+                    return (
+                      <Card key={associate.id} className="border-2">
+                        <CardHeader>
+                          <div className="flex justify-between items-center">
+                            <CardTitle className="text-lg">Associé {index + 1}</CardTitle>
+                            {associates.length > 1 && (
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => removeAssociate(associate.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label>Nom complet *</Label>
+                              <Input
+                                value={associate.fullName}
+                                onChange={(e) => updateAssociate(associate.id, 'fullName', e.target.value)}
+                                placeholder="Nom et prénoms"
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label>Téléphone</Label>
+                              <Input
+                                value={associate.phone}
+                                onChange={(e) => updateAssociate(associate.id, 'phone', e.target.value)}
+                                placeholder="+225 0101010101"
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label>Email</Label>
+                              <Input
+                                type="email"
+                                value={associate.email}
+                                onChange={(e) => updateAssociate(associate.id, 'email', e.target.value)}
+                                placeholder="email@exemple.com"
+                              />
+                            </div>
+                            <div>
+                              <Label>N° Pièce d'identité</Label>
+                              <Input
+                                value={associate.idNumber}
+                                onChange={(e) => updateAssociate(associate.id, 'idNumber', e.target.value)}
+                                placeholder="CNI, Passeport..."
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="border-t pt-4">
+                            <h4 className="font-semibold mb-3">Apports</h4>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <Label>Apport en numéraire (FCFA) *</Label>
+                                <Input
+                                  type="number"
+                                  value={associate.cashContribution}
+                                  onChange={(e) => updateAssociate(associate.id, 'cashContribution', parseFloat(e.target.value) || 0)}
+                                  placeholder="0"
+                                  min="0"
+                                />
+                              </div>
+                              <div>
+                                <Label>Apport en nature (FCFA)</Label>
+                                <Input
+                                  type="number"
+                                  value={associate.natureContributionValue}
+                                  onChange={(e) => updateAssociate(associate.id, 'natureContributionValue', parseFloat(e.target.value) || 0)}
+                                  placeholder="0"
+                                  min="0"
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="mt-3">
+                              <Label>Description de l'apport en nature</Label>
+                              <Textarea
+                                value={associate.natureContributionDescription}
+                                onChange={(e) => updateAssociate(associate.id, 'natureContributionDescription', e.target.value)}
+                                placeholder="Ex: Véhicule, Matériel informatique..."
+                                rows={2}
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="bg-muted/50 p-4 rounded-lg">
+                            <h4 className="font-semibold mb-3">Calcul automatique (OHADA - 5000 FCFA/part)</h4>
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                              <div>
+                                <p className="text-muted-foreground">Apport total</p>
+                                <p className="font-bold text-lg">{totalContribution.toLocaleString()} FCFA</p>
+                              </div>
+                              <div>
+                                <p className="text-muted-foreground">Pourcentage</p>
+                                <p className="font-bold text-lg">{(calculated as any)?.percentage || 0}%</p>
+                              </div>
+                              <div>
+                                <p className="text-muted-foreground">Nombre de parts</p>
+                                <p className="font-bold text-lg">{(calculated as any)?.numberOfShares || 0}</p>
+                              </div>
+                              <div>
+                                <p className="text-muted-foreground">Numérotation</p>
+                                <p className="font-bold text-lg">
+                                  {(calculated as any)?.shareStart || 0} à {(calculated as any)?.shareEnd || 0}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Step 6: Additional Services */}
+              {step === 6 && (
                 <div className="space-y-4">
                   <p className="text-muted-foreground mb-4">
                     Sélectionnez les services complémentaires dont vous avez besoin :
@@ -366,8 +738,8 @@ const Create = () => {
                 </div>
               )}
 
-              {/* Step 5: Summary */}
-              {step === 5 && (
+              {/* Step 7: Summary */}
+              {step === 7 && (
                 <div className="space-y-6">
                   <div className="bg-muted/50 p-6 rounded-lg space-y-3">
                     <h3 className="font-semibold text-lg mb-4">Récapitulatif de votre demande</h3>
@@ -440,7 +812,7 @@ const Create = () => {
                   </Button>
                 )}
                 
-                {step < 5 ? (
+                {step < 7 ? (
                   <Button onClick={nextStep} className="ml-auto">
                     Suivant
                   </Button>

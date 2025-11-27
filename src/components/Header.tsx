@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/logo.png";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, userRole } = useAuth();
 
   const navigation = [
     { name: "Accueil", href: "/" },
@@ -45,6 +47,20 @@ const Header = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center space-x-4">
+            {user ? (
+              <Link to={userRole === 'admin' ? '/admin/dashboard' : '/client/dashboard'}>
+                <Button variant="outline" className="font-semibold">
+                  Mon Espace
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/auth">
+                <Button variant="outline" className="font-semibold">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Connexion
+                </Button>
+              </Link>
+            )}
             <Link to="/create">
               <Button className="bg-gradient-accent hover:opacity-90 shadow-soft font-semibold">
                 Créer mon entreprise
@@ -74,7 +90,21 @@ const Header = () => {
                 {item.name}
               </Link>
             ))}
-            <div className="pt-4 px-4">
+            <div className="pt-4 px-4 space-y-2">
+              {user ? (
+                <Link to={userRole === 'admin' ? '/admin/dashboard' : '/client/dashboard'} onClick={() => setIsOpen(false)}>
+                  <Button variant="outline" className="w-full font-semibold">
+                    Mon Espace
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/auth" onClick={() => setIsOpen(false)}>
+                  <Button variant="outline" className="w-full font-semibold">
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Connexion
+                  </Button>
+                </Link>
+              )}
               <Link to="/create" onClick={() => setIsOpen(false)}>
                 <Button className="w-full bg-gradient-accent hover:opacity-90 shadow-soft font-semibold">
                   Créer mon entreprise
