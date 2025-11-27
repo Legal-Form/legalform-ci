@@ -1,13 +1,31 @@
 # 📦 Guide de Déploiement - Legal Form
 
-## 🎯 Obtenir les fichiers de production
+## 🎯 Obtenir les fichiers de production (DOSSIER DISK)
 
-### Option 1: Via l'interface Lovable (RECOMMANDÉ)
+### ⚠️ IMPORTANT - Compilation du dossier DISK
+
+Pour obtenir le dossier `dist/` (fichiers compilés prêts pour SafaryCloud), vous DEVEZ utiliser le bouton **"Publish"** dans Lovable :
+
+### Option 1: Via l'interface Lovable (RECOMMANDÉ) ✅
 
 1. **Cliquez sur le bouton "Publish"** en haut à droite de l'interface Lovable
 2. **Cliquez sur "Update"** pour générer le build de production
-3. **Attendez la fin du build** (environ 1-2 minutes)
+3. **Attendez la fin du build** (environ 1-2 minutes) - Lovable compile automatiquement tous les fichiers
 4. **Téléchargez les fichiers** depuis l'interface de déploiement
+5. Le dossier téléchargé contient tout le nécessaire : `index.html`, `assets/`, fichiers JS/CSS optimisés
+
+**📁 Contenu du dossier DISK après compilation :**
+```
+dist/
+├── index.html (page principale)
+├── assets/
+│   ├── index-[hash].js (JavaScript compilé et optimisé)
+│   ├── index-[hash].css (CSS compilé et optimisé)
+│   ├── hero-bg-[hash].jpg (images)
+│   ├── logo-[hash].png
+│   └── ... (tous les autres assets)
+└── robots.txt
+```
 
 ### Option 2: Via GitHub (si configuré)
 
