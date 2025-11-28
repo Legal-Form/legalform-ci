@@ -13,16 +13,6 @@ const Services = () => {
       details: "Structure flexible pour PME avec responsabilité limitée des associés",
     },
     {
-      name: "SA",
-      description: "Société Anonyme",
-      details: "Pour grandes entreprises avec capital important et actionnaires multiples",
-    },
-    {
-      name: "SAS",
-      description: "Société par Actions Simplifiée",
-      details: "Structure moderne offrant une grande liberté statutaire",
-    },
-    {
       name: "SUARL",
       description: "Société Unipersonnelle à Responsabilité Limitée",
       details: "SARL avec un seul associé, idéale pour entrepreneurs solo",
