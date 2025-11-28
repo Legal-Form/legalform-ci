@@ -20,9 +20,20 @@ interface Associate {
   phone: string;
   email: string;
   idNumber: string;
+  birthDate: string;
+  birthPlace: string;
+  maritalStatus: string;
+  maritalRegime: string;
+  childrenCount: number;
+  residenceAddress: string;
+  isManager: boolean;
   cashContribution: number;
   natureContributionDescription: string;
   natureContributionValue: number;
+  // Document files
+  idDocument: File | null;
+  birthCertificate: File | null;
+  criminalRecord: File | null;
 }
 
 const Create = () => {
@@ -58,9 +69,19 @@ const Create = () => {
       phone: "",
       email: "",
       idNumber: "",
+      birthDate: "",
+      birthPlace: "",
+      maritalStatus: "",
+      maritalRegime: "",
+      childrenCount: 0,
+      residenceAddress: "",
+      isManager: false,
       cashContribution: 0,
       natureContributionDescription: "",
       natureContributionValue: 0,
+      idDocument: null,
+      birthCertificate: null,
+      criminalRecord: null,
     }
   ]);
   
@@ -81,8 +102,6 @@ const Create = () => {
 
   const structureTypes = [
     { value: "sarl", label: "SARL - Société à Responsabilité Limitée" },
-    { value: "sa", label: "SA - Société Anonyme" },
-    { value: "sas", label: "SAS - Société par Actions Simplifiée" },
     { value: "suarl", label: "SUARL - Société Unipersonnelle à Responsabilité Limitée" },
     { value: "snc", label: "SNC - Société en Nom Collectif" },
     { value: "scs", label: "SCS - Société en Commandite Simple" },
@@ -94,9 +113,10 @@ const Create = () => {
   ];
 
   const regions = [
-    "Abidjan", "Yamoussoukro", "Bouaké", "Daloa", "San-Pédro", "Korhogo", "Man",
-    "Gagnoa", "Divo", "Soubré", "Abengourou", "Bondoukou", "Dimbokro", "Séguéla",
-    "Odienné", "Touba", "Ferkessédougou", "Boundiali", "Tingréla", "Danané"
+    "Abidjan (Lagunes)", "Yamoussoukro (Lacs)", "Bouaké (Vallée du Bandama)",
+    "Daloa (Sassandra-Marahoué)", "San-Pédro (Bas-Sassandra)", "Korhogo (Savanes)",
+    "Man (Montagnes)", "Abengourou (Comoé)", "Bondoukou (Zanzan)", "Gagnoa (Gôh-Djiboua)",
+    "Divo (Lôh-Djiboua)", "Soubré (Nawa)", "Séguéla (Worodougou)", "Odienné (Denguélé)"
   ];
 
   const additionalServicesList = [
@@ -145,9 +165,19 @@ const Create = () => {
       phone: "",
       email: "",
       idNumber: "",
+      birthDate: "",
+      birthPlace: "",
+      maritalStatus: "",
+      maritalRegime: "",
+      childrenCount: 0,
+      residenceAddress: "",
+      isManager: false,
       cashContribution: 0,
       natureContributionDescription: "",
       natureContributionValue: 0,
+      idDocument: null,
+      birthCertificate: null,
+      criminalRecord: null,
     }]);
     setFormData({ ...formData, associatesCount: (associates.length + 1).toString() });
   };

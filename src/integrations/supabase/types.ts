@@ -16,52 +16,73 @@ export type Database = {
     Tables: {
       company_associates: {
         Row: {
+          birth_date: string | null
+          birth_place: string | null
           cash_contribution: number | null
+          children_count: number | null
           company_request_id: string
           created_at: string
           email: string | null
           full_name: string
           id: string
           id_number: string | null
+          is_manager: boolean | null
+          marital_regime: string | null
+          marital_status: string | null
           nature_contribution_description: string | null
           nature_contribution_value: number | null
           number_of_shares: number | null
           percentage: number | null
           phone: string | null
+          residence_address: string | null
           share_end: number | null
           share_start: number | null
           total_contribution: number | null
         }
         Insert: {
+          birth_date?: string | null
+          birth_place?: string | null
           cash_contribution?: number | null
+          children_count?: number | null
           company_request_id: string
           created_at?: string
           email?: string | null
           full_name: string
           id?: string
           id_number?: string | null
+          is_manager?: boolean | null
+          marital_regime?: string | null
+          marital_status?: string | null
           nature_contribution_description?: string | null
           nature_contribution_value?: number | null
           number_of_shares?: number | null
           percentage?: number | null
           phone?: string | null
+          residence_address?: string | null
           share_end?: number | null
           share_start?: number | null
           total_contribution?: number | null
         }
         Update: {
+          birth_date?: string | null
+          birth_place?: string | null
           cash_contribution?: number | null
+          children_count?: number | null
           company_request_id?: string
           created_at?: string
           email?: string | null
           full_name?: string
           id?: string
           id_number?: string | null
+          is_manager?: boolean | null
+          marital_regime?: string | null
+          marital_status?: string | null
           nature_contribution_description?: string | null
           nature_contribution_value?: number | null
           number_of_shares?: number | null
           percentage?: number | null
           phone?: string | null
+          residence_address?: string | null
           share_end?: number | null
           share_start?: number | null
           total_contribution?: number | null
@@ -84,7 +105,9 @@ export type Database = {
           file_name: string
           file_path: string
           id: string
+          original_name: string | null
           uploaded_at: string
+          uploaded_by: string | null
         }
         Insert: {
           associate_id?: string | null
@@ -93,7 +116,9 @@ export type Database = {
           file_name: string
           file_path: string
           id?: string
+          original_name?: string | null
           uploaded_at?: string
+          uploaded_by?: string | null
         }
         Update: {
           associate_id?: string | null
@@ -102,7 +127,9 @@ export type Database = {
           file_name?: string
           file_path?: string
           id?: string
+          original_name?: string | null
           uploaded_at?: string
+          uploaded_by?: string | null
         }
         Relationships: [
           {
@@ -185,7 +212,7 @@ export type Database = {
           structure_type: string
           tracking_number: string | null
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           activity?: string | null
@@ -206,7 +233,7 @@ export type Database = {
           structure_type: string
           tracking_number?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           activity?: string | null
@@ -227,7 +254,7 @@ export type Database = {
           structure_type?: string
           tracking_number?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -350,6 +377,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_document_path: {
+        Args: {
+          associate_name: string
+          doc_type: string
+          is_manager: boolean
+          original_filename: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
