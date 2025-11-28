@@ -12,12 +12,16 @@ const Footer = () => {
   ];
 
   const regions = [
-    "Abidjan",
-    "Yamoussoukro",
-    "Bouaké",
-    "Daloa",
-    "San-Pédro",
-    "Korhogo",
+    "Abidjan (Lagunes)",
+    "Yamoussoukro (Lacs)",
+    "Bouaké (Vallée du Bandama)",
+    "Daloa (Sassandra-Marahoué)",
+    "San-Pédro (Bas-Sassandra)",
+    "Korhogo (Savanes)",
+    "Man (Montagnes)",
+    "Abengourou (Comoé)",
+    "Bondoukou (Zanzan)",
+    "Gagnoa (Gôh-Djiboua)",
   ];
 
   return (
