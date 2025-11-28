@@ -24,7 +24,7 @@ const Showcase = () => {
     },
     {
       name: "TECH SOLUTIONS CI",
-      type: "SAS",
+      type: "SARL",
       region: "Abidjan",
       district: "Cocody",
       date: "2025-11-10",
@@ -75,7 +75,7 @@ const Showcase = () => {
   ];
 
   const regions = ["Abidjan", "Yamoussoukro", "Bouaké", "Daloa", "San-Pédro", "Korhogo", "Man"];
-  const types = ["SARL", "SA", "SAS", "SUARL", "Association", "ONG"];
+  const types = ["SARL", "SUARL", "SNC", "SCS", "Association", "ONG", "Coopérative"];
 
   const filteredCompanies = companies.filter(company => {
     const regionMatch = filterRegion === "all" || company.region === filterRegion;

@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import AssociateForm from "@/components/AssociateForm";
 
 interface Associate {
   id: string;
@@ -195,6 +196,12 @@ const Create = () => {
     ));
   };
 
+  const handleFileChange = (id: string, field: 'idDocument' | 'birthCertificate' | 'criminalRecord', file: File | null) => {
+    setAssociates(associates.map(a =>
+      a.id === id ? { ...a, [field]: file } : a
+    ));
+  };
+
   const handleSubmit = async () => {
     if (!user) {
       toast({
@@ -258,7 +265,7 @@ const Create = () => {
         if (managerError) console.error("Manager insert error:", managerError);
       }
 
-      // Insert associates with calculated shares
+      // Insert associates with calculated shares and additional fields
       const calculatedAssociates = calculateShareDistribution();
       const associatesData = calculatedAssociates.map(a => ({
         company_request_id: requestData.id,
@@ -266,6 +273,13 @@ const Create = () => {
         phone: a.phone,
         email: a.email,
         id_number: a.idNumber,
+        birth_date: a.birthDate || null,
+        birth_place: a.birthPlace || null,
+        marital_status: a.maritalStatus || null,
+        marital_regime: a.maritalRegime || null,
+        children_count: a.childrenCount || 0,
+        residence_address: a.residenceAddress || null,
+        is_manager: a.isManager || false,
         cash_contribution: a.cashContribution,
         nature_contribution_description: a.natureContributionDescription,
         nature_contribution_value: a.natureContributionValue,
@@ -273,6 +287,7 @@ const Create = () => {
         share_start: (a as any).shareStart,
         share_end: (a as any).shareEnd,
         number_of_shares: (a as any).numberOfShares,
+        total_contribution: a.cashContribution + a.natureContributionValue,
       }));
 
       const { error: associatesError } = await supabase
@@ -611,124 +626,17 @@ const Create = () => {
                     const totalContribution = associate.cashContribution + associate.natureContributionValue;
                     
                     return (
-                      <Card key={associate.id} className="border-2">
-                        <CardHeader>
-                          <div className="flex justify-between items-center">
-                            <CardTitle className="text-lg">Associé {index + 1}</CardTitle>
-                            {associates.length > 1 && (
-                              <Button
-                                type="button"
-                                variant="destructive"
-                                size="sm"
-                                onClick={() => removeAssociate(associate.id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </div>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <Label>Nom complet *</Label>
-                              <Input
-                                value={associate.fullName}
-                                onChange={(e) => updateAssociate(associate.id, 'fullName', e.target.value)}
-                                placeholder="Nom et prénoms"
-                                required
-                              />
-                            </div>
-                            <div>
-                              <Label>Téléphone</Label>
-                              <Input
-                                value={associate.phone}
-                                onChange={(e) => updateAssociate(associate.id, 'phone', e.target.value)}
-                                placeholder="+225 0101010101"
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <Label>Email</Label>
-                              <Input
-                                type="email"
-                                value={associate.email}
-                                onChange={(e) => updateAssociate(associate.id, 'email', e.target.value)}
-                                placeholder="email@exemple.com"
-                              />
-                            </div>
-                            <div>
-                              <Label>N° Pièce d'identité</Label>
-                              <Input
-                                value={associate.idNumber}
-                                onChange={(e) => updateAssociate(associate.id, 'idNumber', e.target.value)}
-                                placeholder="CNI, Passeport..."
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="border-t pt-4">
-                            <h4 className="font-semibold mb-3">Apports</h4>
-                            <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                <Label>Apport en numéraire (FCFA) *</Label>
-                                <Input
-                                  type="number"
-                                  value={associate.cashContribution}
-                                  onChange={(e) => updateAssociate(associate.id, 'cashContribution', parseFloat(e.target.value) || 0)}
-                                  placeholder="0"
-                                  min="0"
-                                />
-                              </div>
-                              <div>
-                                <Label>Apport en nature (FCFA)</Label>
-                                <Input
-                                  type="number"
-                                  value={associate.natureContributionValue}
-                                  onChange={(e) => updateAssociate(associate.id, 'natureContributionValue', parseFloat(e.target.value) || 0)}
-                                  placeholder="0"
-                                  min="0"
-                                />
-                              </div>
-                            </div>
-                            
-                            <div className="mt-3">
-                              <Label>Description de l'apport en nature</Label>
-                              <Textarea
-                                value={associate.natureContributionDescription}
-                                onChange={(e) => updateAssociate(associate.id, 'natureContributionDescription', e.target.value)}
-                                placeholder="Ex: Véhicule, Matériel informatique..."
-                                rows={2}
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="bg-muted/50 p-4 rounded-lg">
-                            <h4 className="font-semibold mb-3">Calcul automatique (OHADA - 5000 FCFA/part)</h4>
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <p className="text-muted-foreground">Apport total</p>
-                                <p className="font-bold text-lg">{totalContribution.toLocaleString()} FCFA</p>
-                              </div>
-                              <div>
-                                <p className="text-muted-foreground">Pourcentage</p>
-                                <p className="font-bold text-lg">{(calculated as any)?.percentage || 0}%</p>
-                              </div>
-                              <div>
-                                <p className="text-muted-foreground">Nombre de parts</p>
-                                <p className="font-bold text-lg">{(calculated as any)?.numberOfShares || 0}</p>
-                              </div>
-                              <div>
-                                <p className="text-muted-foreground">Numérotation</p>
-                                <p className="font-bold text-lg">
-                                  {(calculated as any)?.shareStart || 0} à {(calculated as any)?.shareEnd || 0}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
+                      <AssociateForm
+                        key={associate.id}
+                        associate={associate}
+                        index={index}
+                        calculated={calculated}
+                        totalContribution={totalContribution}
+                        canRemove={associates.length > 1}
+                        onUpdate={updateAssociate}
+                        onRemove={removeAssociate}
+                        onFileChange={handleFileChange}
+                      />
                     );
                   })}
                 </div>

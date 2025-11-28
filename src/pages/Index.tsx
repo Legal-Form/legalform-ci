@@ -12,7 +12,7 @@ const Index = () => {
       icon: Building2,
       title: "Création & Structuration",
       description: "De l'idée au lancement opérationnel",
-      items: ["SARL, SA, SAS, SUARL, Entreprise Individuelle", "Association, ONG, Coopérative", "Structuration et formalisation de projet", "Publication au journal officiel incluse"],
+      items: ["SARL, SUARL, SNC, SCS, Entreprise Individuelle", "Association, ONG, Coopérative", "Structuration et formalisation de projet", "Publication au journal officiel incluse"],
     },
     {
       icon: FileText,
@@ -57,7 +57,7 @@ const Index = () => {
     },
     {
       name: "KOUASSI Marie",
-      company: "TECHNOVATE SAS",
+      company: "TECHNOVATE SARL",
       region: "Abidjan",
       rating: 5,
       comment: "J'ai créé mon entreprise en moins d'une semaine. Excellent accompagnement !",
