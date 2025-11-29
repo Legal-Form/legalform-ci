@@ -148,50 +148,6 @@ export type Database = {
           },
         ]
       }
-      company_manager: {
-        Row: {
-          birth_certificate: string | null
-          company_request_id: string
-          created_at: string
-          criminal_record: string | null
-          email: string
-          full_name: string
-          id: string
-          id_number: string | null
-          phone: string
-        }
-        Insert: {
-          birth_certificate?: string | null
-          company_request_id: string
-          created_at?: string
-          criminal_record?: string | null
-          email: string
-          full_name: string
-          id?: string
-          id_number?: string | null
-          phone: string
-        }
-        Update: {
-          birth_certificate?: string | null
-          company_request_id?: string
-          created_at?: string
-          criminal_record?: string | null
-          email?: string
-          full_name?: string
-          id?: string
-          id_number?: string | null
-          phone?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "company_manager_company_request_id_fkey"
-            columns: ["company_request_id"]
-            isOneToOne: true
-            referencedRelation: "company_requests"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       company_requests: {
         Row: {
           activity: string | null
@@ -377,6 +333,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      ensure_super_admin: { Args: never; Returns: undefined }
       generate_document_path: {
         Args: {
           associate_name: string
