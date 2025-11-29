@@ -39,6 +39,7 @@ interface Associate {
 
 const Create = () => {
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     structureType: "",
     region: "",
@@ -121,6 +122,12 @@ const Create = () => {
     { id: "ntd", label: "NTD - Numéro de Télédéclarant" },
     { id: "domiciliation", label: "Domiciliation commerciale" },
   ];
+
+  const calculatePrice = () => {
+    const basePrice = formData.region === "Abidjan (Lagunes)" ? 150000 : 200000;
+    const servicesPrice = formData.additionalServices.length * 25000;
+    return basePrice + servicesPrice;
+  };
 
   const calculateShareDistribution = () => {
     // Utiliser le capital déclaré à l'étape 3 comme référence
@@ -224,25 +231,18 @@ const Create = () => {
     if (!user) {
       toast({
         title: "Erreur",
-        description: "Vous devez être connecté",
+        description: "Vous devez être connecté pour soumettre une demande",
         variant: "destructive",
       });
       return;
     }
 
-    // Validation basique
-    if (!formData.contactName || !formData.phone || !formData.email) {
-      toast({
-        title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
-        variant: "destructive",
-      });
-      return;
-    }
+    setIsSubmitting(true);
 
     try {
-      const estimatedPrice = formData.region === "Abidjan" ? 150000 : 200000;
+      const estimatedPrice = calculatePrice();
       
+      // 1. Create company request
       const { data: requestData, error: requestError } = await supabase
         .from('company_requests')
         .insert({
@@ -266,9 +266,7 @@ const Create = () => {
 
       if (requestError) throw requestError;
 
-      // Manager info insertion removed - no longer needed
-
-      // Insert associates with calculated shares and additional fields
+      // 2. Insert associates with calculated shares
       const calculatedAssociates = calculateShareDistribution();
       const associatesData = calculatedAssociates.map(a => ({
         company_request_id: requestData.id,
@@ -299,21 +297,40 @@ const Create = () => {
 
       if (associatesError) console.error("Associates insert error:", associatesError);
 
-      toast({
-        title: "Demande envoyée avec succès !",
-        description: `Numéro de suivi: ${requestData.tracking_number}. Un conseiller vous contactera sous 24h`,
+      // 3. Initiate payment with FedaPay
+      const { data: paymentData, error: paymentError } = await supabase.functions.invoke('create-payment', {
+        body: {
+          amount: estimatedPrice,
+          description: `Création d'entreprise ${formData.structureType.toUpperCase()} - ${formData.companyName || 'Sans nom'}`,
+          requestId: requestData.id,
+          customerEmail: formData.email,
+          customerName: formData.contactName,
+          customerPhone: formData.phone
+        }
       });
+
+      if (paymentError) throw paymentError;
+
+      toast({
+        title: "Demande enregistrée",
+        description: "Redirection vers la page de paiement...",
+      });
+
+      // Redirect to FedaPay payment page
+      if (paymentData?.paymentUrl) {
+        window.location.href = paymentData.paymentUrl;
+      } else {
+        throw new Error("URL de paiement non disponible");
+      }
       
-      setTimeout(() => {
-        navigate("/client/dashboard");
-      }, 2000);
-    } catch (error) {
-      console.error("Error submitting request:", error);
+    } catch (error: any) {
+      console.error('Erreur lors de la soumission:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue. Veuillez réessayer.",
+        description: error.message || "Une erreur est survenue lors de la soumission",
         variant: "destructive",
       });
+      setIsSubmitting(false);
     }
   };
 
@@ -609,62 +626,51 @@ const Create = () => {
                   <div className="bg-muted/50 p-6 rounded-lg space-y-3">
                     <h3 className="font-semibold text-lg mb-4">Récapitulatif de votre demande</h3>
                     
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Type de structure</p>
-                        <p className="font-medium">
-                          {structureTypes.find(t => t.value === formData.structureType)?.label}
-                        </p>
-                      </div>
+                    <div className="space-y-2">
+                      <p><strong>Type de structure :</strong> {structureTypes.find(t => t.value === formData.structureType)?.label}</p>
+                      <p><strong>Région :</strong> {formData.region}</p>
+                      {formData.city && <p><strong>Ville :</strong> {formData.city}</p>}
+                      <p><strong>Nom de contact :</strong> {formData.contactName}</p>
+                      <p><strong>Email :</strong> {formData.email}</p>
+                      <p><strong>Téléphone :</strong> {formData.phone}</p>
+                      {formData.companyName && <p><strong>Nom de l'entreprise :</strong> {formData.companyName}</p>}
+                      {formData.activity && <p><strong>Activité :</strong> {formData.activity}</p>}
+                      {formData.capital && <p><strong>Capital social :</strong> {parseInt(formData.capital).toLocaleString()} FCFA</p>}
+                      <p><strong>Nombre d'associés :</strong> {associates.length}</p>
                       
-                      <div>
-                        <p className="text-sm text-muted-foreground">Région</p>
-                        <p className="font-medium">{formData.region}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm text-muted-foreground">Nom de la structure</p>
-                        <p className="font-medium">{formData.companyName}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm text-muted-foreground">Contact</p>
-                        <p className="font-medium">{formData.contactName}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm text-muted-foreground">Téléphone</p>
-                        <p className="font-medium">{formData.phone}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm text-muted-foreground">Email</p>
-                        <p className="font-medium">{formData.email}</p>
-                      </div>
-                    </div>
-                    
-                    {formData.additionalServices.length > 0 && (
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-2">Services complémentaires</p>
-                        <div className="flex flex-wrap gap-2">
-                          {formData.additionalServices.map(serviceId => (
-                            <span key={serviceId} className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
-                              {additionalServicesList.find(s => s.id === serviceId)?.label}
-                            </span>
-                          ))}
+                      {formData.additionalServices.length > 0 && (
+                        <div className="mt-4">
+                          <strong>Services additionnels :</strong>
+                          <ul className="list-disc list-inside ml-4 mt-2">
+                            {formData.additionalServices.map(serviceId => (
+                              <li key={serviceId}>{additionalServicesList.find(s => s.id === serviceId)?.label}</li>
+                            ))}
+                          </ul>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
-                  
-                  <div className="bg-gradient-hero text-white p-6 rounded-lg">
-                    <h4 className="font-bold text-xl mb-2">Tarif estimé</h4>
-                    <p className="text-3xl font-bold text-accent mb-2">
-                      {formData.region === "Abidjan" ? "150 000 FCFA" : "Jusqu'à 200 000 FCFA"}
+
+                  <div className="bg-primary/10 p-6 rounded-lg border-2 border-primary/20">
+                    <div className="flex justify-between items-center mb-4">
+                      <p className="text-lg font-semibold">
+                        Tarif estimé :
+                      </p>
+                      <p className="text-2xl font-bold text-primary">
+                        {calculatePrice().toLocaleString()} FCFA
+                      </p>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Le prix final sera confirmé par notre équipe après étude de votre dossier.
                     </p>
-                    <p className="text-sm text-white/80">
-                      Modalité : 50% d'acompte, puis paiement progressif
-                    </p>
+                    
+                    <div className="bg-background p-4 rounded-lg">
+                      <h4 className="font-semibold mb-2">Méthodes de paiement acceptées :</h4>
+                      <ul className="text-sm space-y-1">
+                        <li>✓ Mobile Money (MTN, Moov, Orange Money)</li>
+                        <li>✓ Cartes bancaires (Visa, Mastercard)</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               )}
@@ -682,8 +688,12 @@ const Create = () => {
                     Suivant
                   </Button>
                 ) : (
-                  <Button onClick={handleSubmit} className="ml-auto bg-accent hover:bg-accent/90">
-                    Soumettre ma demande
+                  <Button 
+                    onClick={handleSubmit} 
+                    className="ml-auto bg-accent hover:bg-accent/90"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Traitement en cours..." : "Procéder au paiement"}
                   </Button>
                 )}
               </div>
