@@ -54,14 +54,7 @@ const Create = () => {
     additionalServices: [] as string[],
   });
   
-  const [managerInfo, setManagerInfo] = useState({
-    fullName: "",
-    phone: "",
-    email: "",
-    idNumber: "",
-    birthCertificate: "",
-    criminalRecord: "",
-  });
+  // Manager info removed - no longer needed
   
   const [associates, setAssociates] = useState<Associate[]>([
     {
@@ -130,18 +123,33 @@ const Create = () => {
   ];
 
   const calculateShareDistribution = () => {
-    const totalCapital = associates.reduce((sum, a) => 
+    // Utiliser le capital déclaré à l'étape 3 comme référence
+    const declaredCapital = parseFloat(formData.capital) || 0;
+    
+    const totalContributions = associates.reduce((sum, a) => 
       sum + a.cashContribution + a.natureContributionValue, 0
     );
     
-    if (totalCapital === 0) return associates;
+    // Si le capital déclaré diffère significativement des contributions totales, afficher un avertissement
+    if (declaredCapital > 0 && Math.abs(declaredCapital - totalContributions) > 1000) {
+      toast({
+        title: "Attention",
+        description: `Le capital déclaré (${declaredCapital.toLocaleString()} FCFA) diffère du total des apports (${totalContributions.toLocaleString()} FCFA). Veuillez vérifier.`,
+        variant: "default",
+      });
+    }
+    
+    // Utiliser le capital déclaré pour les calculs
+    const baseCapital = declaredCapital > 0 ? declaredCapital : totalContributions;
+    
+    if (baseCapital === 0) return associates;
     
     const shareValue = 5000; // FCFA par part selon OHADA
     let currentShareNumber = 1;
     
     return associates.map(associate => {
       const totalContribution = associate.cashContribution + associate.natureContributionValue;
-      const percentage = (totalContribution / totalCapital) * 100;
+      const percentage = (totalContribution / baseCapital) * 100;
       const numberOfShares = Math.floor(totalContribution / shareValue);
       const shareStart = currentShareNumber;
       const shareEnd = currentShareNumber + numberOfShares - 1;
@@ -159,6 +167,17 @@ const Create = () => {
   };
 
   const addAssociate = () => {
+    const maxAssociates = parseInt(formData.associatesCount) || 1;
+    
+    if (associates.length >= maxAssociates) {
+      toast({
+        title: "Limite atteinte",
+        description: `Vous avez défini ${maxAssociates} associé(s) à l'étape 3. Impossible d'en ajouter plus.`,
+        variant: "destructive",
+      });
+      return;
+    }
+    
     const newId = (associates.length + 1).toString();
     setAssociates([...associates, {
       id: newId,
@@ -180,7 +199,6 @@ const Create = () => {
       birthCertificate: null,
       criminalRecord: null,
     }]);
-    setFormData({ ...formData, associatesCount: (associates.length + 1).toString() });
   };
 
   const removeAssociate = (id: string) => {
@@ -248,22 +266,7 @@ const Create = () => {
 
       if (requestError) throw requestError;
 
-      // Insert manager info
-      if (managerInfo.fullName) {
-        const { error: managerError } = await supabase
-          .from('company_manager')
-          .insert({
-            company_request_id: requestData.id,
-            full_name: managerInfo.fullName,
-            phone: managerInfo.phone,
-            email: managerInfo.email,
-            id_number: managerInfo.idNumber,
-            birth_certificate: managerInfo.birthCertificate,
-            criminal_record: managerInfo.criminalRecord,
-          });
-        
-        if (managerError) console.error("Manager insert error:", managerError);
-      }
+      // Manager info insertion removed - no longer needed
 
       // Insert associates with calculated shares and additional fields
       const calculatedAssociates = calculateShareDistribution();
@@ -353,7 +356,7 @@ const Create = () => {
 
           {/* Progress Steps */}
           <div className="flex justify-between mb-12">
-            {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+            {[1, 2, 3, 4, 5, 6].map((num) => (
               <div key={num} className="flex flex-col items-center flex-1">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
                   step >= num ? "bg-primary text-white" : "bg-muted text-muted-foreground"
@@ -364,10 +367,9 @@ const Create = () => {
                   {num === 1 && "Type"}
                   {num === 2 && "Localisation"}
                   {num === 3 && "Infos"}
-                  {num === 4 && "Gérant"}
-                  {num === 5 && "Associés"}
-                  {num === 6 && "Services"}
-                  {num === 7 && "Récap"}
+                  {num === 4 && "Associés"}
+                  {num === 5 && "Services"}
+                  {num === 6 && "Récap"}
                 </div>
               </div>
             ))}
@@ -379,12 +381,11 @@ const Create = () => {
                 {step === 1 && <><Building2 className="mr-2" /> Type de structure</>}
                 {step === 2 && <><MapPin className="mr-2" /> Localisation</>}
                 {step === 3 && <><FileText className="mr-2" /> Informations de la structure</>}
-                {step === 4 && <><UserCircle className="mr-2" /> Informations du gérant</>}
-                {step === 5 && <><Users className="mr-2" /> Associés et apports</>}
-                {step === 6 && <><CheckCircle2 className="mr-2" /> Services complémentaires</>}
-                {step === 7 && <><CheckCircle2 className="mr-2" /> Récapitulatif</>}
+                {step === 4 && <><Users className="mr-2" /> Associés et apports</>}
+                {step === 5 && <><CheckCircle2 className="mr-2" /> Services complémentaires</>}
+                {step === 6 && <><CheckCircle2 className="mr-2" /> Récapitulatif</>}
               </CardTitle>
-              <CardDescription>Étape {step} sur 7</CardDescription>
+              <CardDescription>Étape {step} sur 6</CardDescription>
             </CardHeader>
             
             <CardContent className="space-y-6">

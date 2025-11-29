@@ -6,115 +6,67 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const Regions = () => {
+  // Coordonnées uniques - Bureau à Abidjan, couvrant tout le pays
+  const mainOffice = {
+    city: "Abidjan",
+    address: "Cocody, Abidjan, Côte d'Ivoire",
+    phone: "+225 07 09 67 79 25",
+    email: "support@legalform.ci"
+  };
+
   const regions = [
     {
-      name: "Abidjan",
-      districts: ["Cocody", "Plateau", "Marcory", "Yopougon", "Abobo", "Adjamé", "Treichville", "Koumassi", "Port-Bouët", "Attécoubé"],
-      phone: "+225 27 22 XX XX XX",
-      email: "abidjan@legalform.ci"
+      name: "Abidjan (Lagunes)",
+      districts: ["Cocody", "Plateau", "Marcory", "Yopougon", "Abobo", "Adjamé", "Treichville", "Koumassi", "Port-Bouët", "Attécoubé"]
     },
     {
-      name: "Yamoussoukro",
-      districts: ["Yamoussoukro"],
-      phone: "+225 27 30 XX XX XX",
-      email: "yamoussoukro@legalform.ci"
+      name: "Yamoussoukro (Lacs)",
+      districts: ["Yamoussoukro"]
     },
     {
-      name: "Bouaké",
-      districts: ["Bouaké", "Katiola", "Dabakala", "Béoumi"],
-      phone: "+225 27 31 XX XX XX",
-      email: "bouake@legalform.ci"
+      name: "Bouaké (Vallée du Bandama)",
+      districts: ["Bouaké", "Katiola", "Dabakala", "Béoumi"]
     },
     {
-      name: "Daloa",
-      districts: ["Daloa", "Issia", "Vavoua", "Zoukougbeu"],
-      phone: "+225 27 32 XX XX XX",
-      email: "daloa@legalform.ci"
+      name: "Daloa (Sassandra-Marahoué)",
+      districts: ["Daloa", "Issia", "Vavoua", "Zoukougbeu"]
     },
     {
-      name: "San-Pédro",
-      districts: ["San-Pédro", "Sassandra", "Tabou", "Soubré"],
-      phone: "+225 27 34 XX XX XX",
-      email: "sanpedro@legalform.ci"
+      name: "San-Pédro (Bas-Sassandra)",
+      districts: ["San-Pédro", "Sassandra", "Tabou"]
     },
     {
-      name: "Korhogo",
-      districts: ["Korhogo", "Ferkessédougou", "Boundiali", "Tingréla"],
-      phone: "+225 27 36 XX XX XX",
-      email: "korhogo@legalform.ci"
+      name: "Korhogo (Savanes)",
+      districts: ["Korhogo", "Ferkessédougou", "Boundiali", "Tingréla"]
     },
     {
-      name: "Man",
-      districts: ["Man", "Danané", "Biankouma", "Zouan-Hounien"],
-      phone: "+225 27 33 XX XX XX",
-      email: "man@legalform.ci"
+      name: "Man (Montagnes)",
+      districts: ["Man", "Danané", "Biankouma", "Zouan-Hounien"]
     },
     {
-      name: "Gagnoa",
-      districts: ["Gagnoa", "Oumé", "Divo", "Lakota"],
-      phone: "+225 27 32 XX XX XX",
-      email: "gagnoa@legalform.ci"
+      name: "Abengourou (Comoé)",
+      districts: ["Abengourou", "Agnibilékrou", "Bettié"]
     },
     {
-      name: "Abengourou",
-      districts: ["Abengourou", "Agnibilékrou", "Bettié"],
-      phone: "+225 27 35 XX XX XX",
-      email: "abengourou@legalform.ci"
+      name: "Bondoukou (Zanzan)",
+      districts: ["Bondoukou", "Bouna", "Tanda"]
     },
     {
-      name: "Bondoukou",
-      districts: ["Bondoukou", "Bouna", "Tanda"],
-      phone: "+225 27 35 XX XX XX",
-      email: "bondoukou@legalform.ci"
+      name: "Gagnoa (Gôh-Djiboua)",
+      districts: ["Gagnoa", "Oumé", "Divo", "Lakota"]
     },
     {
-      name: "Dimbokro",
-      districts: ["Dimbokro", "Bongouanou", "M'Bahiakro"],
-      phone: "+225 27 30 XX XX XX",
-      email: "dimbokro@legalform.ci"
+      name: "Soubré (Nawa)",
+      districts: ["Soubré", "Méagui", "Buyo"]
     },
     {
-      name: "Séguéla",
-      districts: ["Séguéla", "Mankono", "Kani"],
-      phone: "+225 27 33 XX XX XX",
-      email: "seguela@legalform.ci"
+      name: "Séguéla (Worodougou)",
+      districts: ["Séguéla", "Mankono", "Kani"]
     },
     {
-      name: "Odienné",
-      districts: ["Odienné", "Minignan", "Samatiguila"],
-      phone: "+225 27 33 XX XX XX",
-      email: "odienne@legalform.ci"
-    },
-    {
-      name: "Touba",
-      districts: ["Touba", "Borotou"],
-      phone: "+225 27 33 XX XX XX",
-      email: "touba@legalform.ci"
-    },
-    {
-      name: "Soubré",
-      districts: ["Soubré", "Méagui", "Buyo"],
-      phone: "+225 27 34 XX XX XX",
-      email: "soubre@legalform.ci"
-    },
-    {
-      name: "Grand-Bassam",
-      districts: ["Grand-Bassam", "Bonoua"],
-      phone: "+225 27 21 XX XX XX",
-      email: "grandbassam@legalform.ci"
-    },
-    {
-      name: "Adzopé",
-      districts: ["Adzopé", "Alépé", "Yakassé-Attobrou"],
-      phone: "+225 27 23 XX XX XX",
-      email: "adzope@legalform.ci"
-    },
-    {
-      name: "Agboville",
-      districts: ["Agboville", "Tiassalé", "Sikensi"],
-      phone: "+225 27 23 XX XX XX",
-      email: "agboville@legalform.ci"
-    },
+      name: "Odienné (Denguélé)",
+      districts: ["Odienné", "Minignan", "Samatiguila"]
+    }
   ];
 
   return (
@@ -133,36 +85,63 @@ const Regions = () => {
             </p>
           </div>
 
+          {/* Main Office Info */}
+          <div className="max-w-2xl mx-auto mb-12">
+            <Card className="border-2 border-primary">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl text-primary">Bureau Principal - Abidjan</CardTitle>
+                <CardDescription className="text-base">
+                  Nous couvrons toute la Côte d'Ivoire depuis notre bureau à Abidjan
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-start">
+                  <MapPin className="h-5 w-5 text-primary mr-3 mt-1 flex-shrink-0" />
+                  <p className="text-muted-foreground">{mainOffice.address}</p>
+                </div>
+                <div className="flex items-center">
+                  <Phone className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                  <a href={`tel:${mainOffice.phone}`} className="text-muted-foreground hover:text-primary">
+                    {mainOffice.phone}
+                  </a>
+                </div>
+                <div className="flex items-center">
+                  <Mail className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                  <a href={`mailto:${mainOffice.email}`} className="text-muted-foreground hover:text-primary">
+                    {mainOffice.email}
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Regions Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {regions.map((region, index) => (
-              <Card key={index} className="hover:shadow-strong transition-all hover:border-primary">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-primary">
-                    <MapPin className="h-5 w-5 mr-2" />
-                    {region.name}
-                  </CardTitle>
-                  <CardDescription>
-                    {region.districts.join(", ")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Phone className="h-4 w-4 mr-2" />
-                    {region.phone}
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Mail className="h-4 w-4 mr-2" />
-                    {region.email}
-                  </div>
-                  <Link to="/create">
-                    <Button className="w-full mt-4" variant="outline">
-                      Créer dans cette région
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="mb-12">
+            <h2 className="font-heading font-bold text-3xl text-foreground mb-6 text-center">
+              Régions Couvertes
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {regions.map((region, index) => (
+                <Card key={index} className="hover:shadow-strong transition-all hover:border-primary">
+                  <CardHeader>
+                    <CardTitle className="flex items-center text-primary">
+                      <MapPin className="h-5 w-5 mr-2" />
+                      {region.name}
+                    </CardTitle>
+                    <CardDescription>
+                      {region.districts.join(", ")}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Link to="/create">
+                      <Button className="w-full" variant="outline">
+                        Créer dans cette région
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
 
           {/* CTA Section */}
