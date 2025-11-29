@@ -535,82 +535,8 @@ const Create = () => {
                 </div>
               )}
 
-              {/* Step 4: Manager Info */}
+              {/* Step 4: Associates */}
               {step === 4 && (
-                <div className="space-y-4">
-                  <p className="text-muted-foreground mb-4">
-                    Informations sur le gérant de l'entreprise
-                  </p>
-                  
-                  <div>
-                    <Label htmlFor="managerName">Nom complet du gérant *</Label>
-                    <Input
-                      id="managerName"
-                      value={managerInfo.fullName}
-                      onChange={(e) => setManagerInfo({...managerInfo, fullName: e.target.value})}
-                      placeholder="Nom et prénoms"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="managerPhone">Téléphone *</Label>
-                    <Input
-                      id="managerPhone"
-                      type="tel"
-                      value={managerInfo.phone}
-                      onChange={(e) => setManagerInfo({...managerInfo, phone: e.target.value})}
-                      placeholder="+225 0101010101"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="managerEmail">Email *</Label>
-                    <Input
-                      id="managerEmail"
-                      type="email"
-                      value={managerInfo.email}
-                      onChange={(e) => setManagerInfo({...managerInfo, email: e.target.value})}
-                      placeholder="email@exemple.com"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="managerIdNumber">Numéro de pièce d'identité</Label>
-                    <Input
-                      id="managerIdNumber"
-                      value={managerInfo.idNumber}
-                      onChange={(e) => setManagerInfo({...managerInfo, idNumber: e.target.value})}
-                      placeholder="Ex: CNI, Passeport"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="birthCertificate">Extrait de naissance</Label>
-                    <Input
-                      id="birthCertificate"
-                      value={managerInfo.birthCertificate}
-                      onChange={(e) => setManagerInfo({...managerInfo, birthCertificate: e.target.value})}
-                      placeholder="Référence du document"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="criminalRecord">Casier judiciaire (optionnel)</Label>
-                    <Input
-                      id="criminalRecord"
-                      value={managerInfo.criminalRecord}
-                      onChange={(e) => setManagerInfo({...managerInfo, criminalRecord: e.target.value})}
-                      placeholder="Référence du document"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Step 5: Associates */}
-              {step === 5 && (
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <p className="text-muted-foreground">
@@ -643,8 +569,8 @@ const Create = () => {
                 </div>
               )}
 
-              {/* Step 6: Additional Services */}
-              {step === 6 && (
+              {/* Step 5: Additional Services */}
+              {step === 5 && (
                 <div className="space-y-4">
                   <p className="text-muted-foreground mb-4">
                     Sélectionnez les services complémentaires dont vous avez besoin :
@@ -677,8 +603,8 @@ const Create = () => {
                 </div>
               )}
 
-              {/* Step 7: Summary */}
-              {step === 7 && (
+              {/* Step 6: Summary */}
+              {step === 6 && (
                 <div className="space-y-6">
                   <div className="bg-muted/50 p-6 rounded-lg space-y-3">
                     <h3 className="font-semibold text-lg mb-4">Récapitulatif de votre demande</h3>
@@ -751,7 +677,7 @@ const Create = () => {
                   </Button>
                 )}
                 
-                {step < 7 ? (
+                {step < 6 ? (
                   <Button onClick={nextStep} className="ml-auto">
                     Suivant
                   </Button>
